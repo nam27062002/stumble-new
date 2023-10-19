@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Characters.Config.Character
 {
+    [Serializable]
     public class CharactersEntity : ScriptableObject
     {
         [SerializeField] private List<CharacterConfig> _characterConfigs;

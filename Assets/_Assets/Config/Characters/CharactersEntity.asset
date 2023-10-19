@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: CharactersEntity
   m_EditorClassIdentifier: 
   _characterConfigs:
-  - _prefab: {fileID: 455092662908691165, guid: ac4e2dfc652f0834fa323ee1e906c365, type: 3}
+  - _prefab: {fileID: 2492438607122961659, guid: ac4e2dfc652f0834fa323ee1e906c365, type: 3}
     _textures:
     - {fileID: 2800000, guid: 3d9d8ead897130a48b21e80dc6904615, type: 3}
     - {fileID: 2800000, guid: 5166b85c52f2dba4cb98664b99cca897, type: 3}
