@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.Serialization;
 
 namespace MovementSystem
@@ -6,7 +7,9 @@ namespace MovementSystem
     [RequireComponent(typeof(PlayerInput))]
     public class Player : MonoBehaviour
     {
-        public PlayerInput input;
+        [Header("References")]
+        public PlayerSO Data;
+        [NonSerialized] public PlayerInput input;
         private Rigidbody _rigidbody;
         private Transform _mainCameraTransform;
         private PlayerMovementStateMachine _movementStateMachine;

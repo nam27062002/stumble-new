@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace MovementSystem
 {
-    public class PlayerIdlingState : PlayerMovementState
+    public class PlayerIdlingState : PlayerGroundedState
     {
         public PlayerIdlingState(PlayerMovementStateMachine movementStateMachine) : base(movementStateMachine)
         {
@@ -14,14 +14,14 @@ namespace MovementSystem
         public override void Enter()
         {
             base.Enter();
-            SpeedModifier = 0f;
+            movementStateMachine.reusableData.movementSpeedModifier = 0f;
             ResetVelocity();
         }
 
         public override void Update()
         {
             base.Update();
-            if (MovementInput == Vector2.zero)
+            if (movementStateMachine.reusableData.movementInput == Vector2.zero)
             {
                 return;
             }
@@ -29,17 +29,7 @@ namespace MovementSystem
             OnMove();
         }
 
-        private void OnMove()
-        {
-            if (shouldWalk)
-            {
-                MovementStateMachine.ChangeState(MovementStateMachine.WalkingState);
-            }
-            else
-            {
-                MovementStateMachine.ChangeState(MovementStateMachine.RunningState);
-            }
-        }
+
         #endregion
 
     }

@@ -4,10 +4,10 @@ namespace Characters
 {
     public class CharacterManager : MonoBehaviour
     {
+        
         [SerializeField] private CharactersEntity charactersEntity;
         [SerializeField] private CharacterType characterType;
         [SerializeField] private int skinIndex = 0;
-        
         private CharacterConfig _characterConfig;
         private CharacterSingleManager _characterSingleManager;
         private void Start()

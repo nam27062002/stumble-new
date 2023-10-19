@@ -1,6 +1,6 @@
 ﻿namespace MovementSystem
 {
-    public class PlayerSprintingState : PlayerMovementState
+    public class PlayerSprintingState : PlayerMovingState
     {
         public PlayerSprintingState(PlayerMovementStateMachine movementStateMachine) : base(movementStateMachine)
         {

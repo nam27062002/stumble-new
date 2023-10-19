@@ -5,6 +5,7 @@ namespace MovementSystem
     public class PlayerMovementStateMachine : StateMachine
     {
         public Player Player;
+        public PlayerStateReusableData reusableData;
         public PlayerIdlingState IdlingState { get; }
         public PlayerRunningState RunningState { get; }
         public PlayerWalkingState WalkingState { get; }
@@ -13,6 +14,7 @@ namespace MovementSystem
         public PlayerMovementStateMachine(Player player)
         {
             Player = player;
+            reusableData = new PlayerStateReusableData();
             IdlingState = new PlayerIdlingState(this);
             RunningState = new PlayerRunningState(this);
             WalkingState = new PlayerWalkingState(this);

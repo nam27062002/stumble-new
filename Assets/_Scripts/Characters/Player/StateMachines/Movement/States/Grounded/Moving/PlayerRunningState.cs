@@ -2,7 +2,7 @@
 
 namespace MovementSystem
 {
-    public class PlayerRunningState : PlayerMovementState
+    public class PlayerRunningState : PlayerMovingState
     {
         public PlayerRunningState(PlayerMovementStateMachine movementStateMachine) : base(movementStateMachine)
         {
@@ -12,38 +12,19 @@ namespace MovementSystem
         public override void Enter()
         {
             base.Enter();
-            SpeedModifier = 1f;
+            movementStateMachine.reusableData.movementSpeedModifier = movementData.RunData.SpeedModidier;
         }
         #endregion 
         
         
-        #region Reusable Methods
-        protected override void AddInputActionsCallbacks()
-        {
-            base.AddInputActionsCallbacks();
-            MovementStateMachine.Player.input.PlayerActions.Move.canceled += OnMovementCanceled;
-        }
-
-
-
-        protected override void RemoveInputActionsCallbacks()
-        {
-            base.RemoveInputActionsCallbacks();
-        }
-        #endregion
-
 
         #region Input Methods
         protected override void OnWalkToggleStarted(InputAction.CallbackContext context)
         {
             base.OnWalkToggleStarted(context);
-            MovementStateMachine.ChangeState(MovementStateMachine.WalkingState);
+            movementStateMachine.ChangeState(movementStateMachine.WalkingState);
         }
         
-        protected void OnMovementCanceled(InputAction.CallbackContext context)
-        {
-            MovementStateMachine.ChangeState(MovementStateMachine.IdlingState);
-        }
         #endregion
     }
 }
