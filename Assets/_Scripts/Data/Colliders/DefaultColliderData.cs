@@ -1,21 +1,13 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace _Scripts.Data.Colliders
 {
+    [Serializable]
     public class DefaultColliderData
     {
-        public CapsuleCollider Collider;
-        public Vector3 ColliderCenterInLocalSpace;
-
-        public void Initialize(GameObject gameObject)
-        {
-            if (Collider != null)
-            {
-                return;
-            }
-
-            Collider = gameObject.GetComponent<CapsuleCollider>();
-            ColliderCenterInLocalSpace = Collider.center;
-        }
+        public float Height = 1.8f;
+        public float CenterY = 0.9f;
+        public float Radius = 0.5f;
     }
 }
