@@ -9,6 +9,7 @@ namespace MovementSystem
         public PlayerIdlingState IdlingState { get; }
         public PlayerRunningState RunningState { get; }
         public PlayerWalkingState WalkingState { get; }
+        public PlayerDashingState DashingState { get; }
         public PlayerSprintingState SprintingState { get; }
         
         public PlayerMovementStateMachine(Player player)
@@ -19,6 +20,7 @@ namespace MovementSystem
             RunningState = new PlayerRunningState(this);
             WalkingState = new PlayerWalkingState(this);
             SprintingState = new PlayerSprintingState(this);
+            DashingState = new PlayerDashingState(this);
         }
         
         public Vector2 GetMovementInput => Player.GetMovementInput;

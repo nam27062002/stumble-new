@@ -5,7 +5,7 @@ namespace MovementSystem
 {
     public class PlayerIdlingState : PlayerGroundedState
     {
-        public PlayerIdlingState(PlayerMovementStateMachine movementStateMachine) : base(movementStateMachine)
+        public PlayerIdlingState(PlayerMovementStateMachine stateMachine) : base(stateMachine)
         {
         }
 
@@ -14,14 +14,14 @@ namespace MovementSystem
         public override void Enter()
         {
             base.Enter();
-            movementStateMachine.reusableData.movementSpeedModifier = 0f;
+            stateMachine.reusableData.movementSpeedModifier = 0f;
             ResetVelocity();
         }
 
         public override void Update()
         {
             base.Update();
-            if (movementStateMachine.reusableData.movementInput == Vector2.zero)
+            if (stateMachine.reusableData.movementInput == Vector2.zero)
             {
                 return;
             }

@@ -6,6 +6,7 @@ namespace MovementSystem
     {
         public Vector2 movementInput;
         public float movementSpeedModifier;
+        public float movementOnSlopesSpeedModifier;
         public bool shouldWalk;
         private Vector3 _currentTargetRotation;
         private Vector3 _timeToReachTargetRotation;

@@ -1,9 +1,10 @@
 ﻿namespace MovementSystem
 {
-    public class PlayerMovingState : PlayerMovementState
+    public class PlayerMovingState : PlayerGroundedState
     {
-        public PlayerMovingState(PlayerMovementStateMachine movementStateMachine) : base(movementStateMachine)
+        protected PlayerMovingState(PlayerMovementStateMachine movementStateMachine) : base(movementStateMachine)
         {
         }
+        
     }
 }

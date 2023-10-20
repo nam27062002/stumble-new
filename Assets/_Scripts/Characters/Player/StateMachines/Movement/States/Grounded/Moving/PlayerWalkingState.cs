@@ -12,7 +12,7 @@ namespace MovementSystem
         public override void Enter()
         {
             base.Enter();
-            movementStateMachine.reusableData.movementSpeedModifier = movementData.WalkingData.SpeedModidier;
+            stateMachine.reusableData.movementSpeedModifier = movementData.WalkingData.SpeedModidier;
         }
         #endregion
 
@@ -20,7 +20,7 @@ namespace MovementSystem
         protected override void OnWalkToggleStarted(InputAction.CallbackContext context)
         {
             base.OnWalkToggleStarted(context);
-            movementStateMachine.ChangeState(movementStateMachine.RunningState);
+            stateMachine.ChangeState(stateMachine.RunningState);
         }
         
         #endregion

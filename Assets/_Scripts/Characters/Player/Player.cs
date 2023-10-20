@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Collections;
+using _Scripts.Utilities.Colliders;
+using MovementSystem.Data.Layers;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
 
 namespace MovementSystem
@@ -8,18 +12,30 @@ namespace MovementSystem
     public class Player : MonoBehaviour
     {
         [Header("References")]
-        public PlayerSO Data;
-        [NonSerialized] public PlayerInput input;
-        private Rigidbody _rigidbody;
+        public PlayerSO data;
+        [Header("Collisions")]
+        public CapsuleColliderUtility colliderUtility;
+        public PlayerLayerData layerData;
+        [Header("Model")]
+        public GameObject modelPrefab;
+        
+        [NonSerialized] public PlayerInput Input;
+        
+        [NonSerialized] public Rigidbody Rigidbody;
         private Transform _mainCameraTransform;
         private PlayerMovementStateMachine _movementStateMachine;
         private void Awake()
         {
-            
-            input = GetComponent<PlayerInput>();
-            _rigidbody = GetComponent<Rigidbody>();
+            Input = GetComponent<PlayerInput>();
+            Rigidbody = GetComponent<Rigidbody>();
             if (Camera.main != null) _mainCameraTransform = Camera.main.transform;
             _movementStateMachine = new PlayerMovementStateMachine(this);
+        }
+
+        private void OnValidate()
+        {
+            colliderUtility.Initialize(modelPrefab.GetComponent<CapsuleCollider>());
+            colliderUtility.CalculateCapsuleColliderDimensions();
         }
 
         private void Start()
@@ -37,24 +53,23 @@ namespace MovementSystem
         {
             _movementStateMachine.PhysicsUpdate();
         }
-        
-        public Vector2 GetMovementInput => input.PlayerActions.Move.ReadValue<Vector2>();
+        public Vector2 GetMovementInput => Input.PlayerActions.Move.ReadValue<Vector2>();
 
         public void SetAddForce(Vector3 movementDir)
         {
-            _rigidbody.AddForce(movementDir, ForceMode.VelocityChange);
+            Rigidbody.AddForce(movementDir, ForceMode.VelocityChange);
         }
 
         public void SetRotation(Quaternion quaternion)
         {
-            _rigidbody.MoveRotation(quaternion);
+            Rigidbody.MoveRotation(quaternion);
         }
         public Vector3 GetEulerAnglesCamera => _mainCameraTransform.eulerAngles;
-        public Vector3 GetEulerAnglesPlayer => _rigidbody.rotation.eulerAngles;
+        public Vector3 GetEulerAnglesPlayer => Rigidbody.rotation.eulerAngles;
         public Vector3 PlayerHorizontalVelocity
         {
-            get { return _rigidbody.velocity; }
-            set { _rigidbody.velocity = value; }
+            get { return Rigidbody.velocity; }
+            set { Rigidbody.velocity = value; }
         }
 
     }
