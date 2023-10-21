@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   GroundedData:
     baseSpeed: 5
-    SlopeSpeedAngles:
+    slopeSpeedAngles:
       serializedVersion: 2
       m_Curve:
       - serializedVersion: 3
@@ -38,9 +38,24 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    BaseRotationData:
-      TargetRotationReachTime: {x: 0, y: 0.14, z: 0}
-    WalkingData:
+    baseRotationData:
+      targetRotationReachTime: {x: 0, y: 0.14, z: 0}
+    walkingData:
       SpeedModidier: 0.225
-    RunData:
+    runData:
       SpeedModidier: 1
+    dashData:
+      speedModifier: 2
+      rotationData:
+        targetRotationReachTime: {x: 0, y: 0.02, z: 0}
+      timeTobeConsideredConsecutive: 1
+      consecutiveDashesLimitAmount: 2
+      dashLimitReachedCooldown: 1.75
+    sprintData:
+      speedModifier: 1.7
+      sprintToRunTime: 1
+      runToWalkTime: 0.5
+    stopData:
+      lightDecelerationForce: 5
+      mediumDecelerationForce: 6.5
+      hardDecelerationForce: 5

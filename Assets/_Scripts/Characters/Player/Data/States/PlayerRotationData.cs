@@ -6,6 +6,6 @@ namespace MovementSystem
     [Serializable]
     public class PlayerRotationData
     {
-        public Vector3 TargetRotationReachTime;
+        public Vector3 targetRotationReachTime;
     }
 }

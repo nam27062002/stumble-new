@@ -9,7 +9,7 @@ namespace MovementSystem
         private readonly SlopeData _slopeData;
         protected PlayerGroundedState(PlayerMovementStateMachine stateMachine) : base(stateMachine)
         {
-            _slopeData = stateMachine.Player.colliderUtility.slopeData;
+            _slopeData = stateMachine.player.colliderUtility.slopeData;
         }
 
         #region IState Methods
@@ -26,7 +26,7 @@ namespace MovementSystem
 
         private void Float()
         {
-            Vector3 capsuleColliderCenterInWorldSpace = stateMachine.Player.colliderUtility
+            Vector3 capsuleColliderCenterInWorldSpace = stateMachine.player.colliderUtility
                 .CapsuleColliderData.Collider.bounds.center;
             
             Ray downwardsRayFromCapsuleCenter = new Ray(capsuleColliderCenterInWorldSpace, Vector3.down);
@@ -35,12 +35,12 @@ namespace MovementSystem
                     (downwardsRayFromCapsuleCenter, 
                     out RaycastHit hit, 
                     _slopeData.floatRayDistance,
-                    stateMachine.Player.layerData.groundLayer, 
+                    stateMachine.player.layerData.groundLayer, 
                     QueryTriggerInteraction.Ignore)
                 )
             {
                 float groundAngle = Vector3.Angle(hit.normal, -downwardsRayFromCapsuleCenter.direction);
-                float slopeAngleWithPlayerForward = Vector3.Angle(hit.normal, stateMachine.Player.transform.forward);
+                float slopeAngleWithPlayerForward = Vector3.Angle(hit.normal, stateMachine.player.transform.forward);
                 float slopeSpeedModifier = SetSlopeSpeedModifierOnAngle(groundAngle,slopeAngleWithPlayerForward);
 
                 if (slopeSpeedModifier == 0f)
@@ -48,12 +48,12 @@ namespace MovementSystem
                     return;
                 }
                 float distanceToFloatingPoint 
-                    = stateMachine.Player.colliderUtility.CapsuleColliderData.ColliderCenterInLocalSpace.y 
-                      * stateMachine.Player.transform.localScale.y - hit.distance;
+                    = stateMachine.player.colliderUtility.CapsuleColliderData.ColliderCenterInLocalSpace.y 
+                      * stateMachine.player.transform.localScale.y - hit.distance;
                 if (distanceToFloatingPoint == 0) return;
                 float amountToFift = distanceToFloatingPoint * _slopeData.stepReachForce - GetPlayerVerticalVelocity.y;
                 Vector3 liftForce = new Vector3(0f, amountToFift, 0f);
-                stateMachine.Player.Rigidbody.AddForce(liftForce,ForceMode.VelocityChange);
+                stateMachine.player.Rigidbody.AddForce(liftForce,ForceMode.VelocityChange);
             }
         }
 
@@ -64,7 +64,7 @@ namespace MovementSystem
         
         private float SetSlopeSpeedModifierOnAngle(float angle,float slopeAngleWithPlayerForward)
         {
-            float slopeSpeedModifier = stateMachine.Player.data.GroundedData.SlopeSpeedAngles.Evaluate(angle);
+            float slopeSpeedModifier = stateMachine.player.data.GroundedData.slopeSpeedAngles.Evaluate(angle);
             
             slopeSpeedModifier = IsPlayerClimbingSlope(slopeAngleWithPlayerForward)
                 ? slopeSpeedModifier
@@ -80,31 +80,31 @@ namespace MovementSystem
         protected override void AddInputActionsCallbacks()
         {
             base.AddInputActionsCallbacks();
-            stateMachine.Player.Input.PlayerActions.Move.canceled += OnMovementCanceled;
-            stateMachine.Player.Input.PlayerActions.Dash.started += OnDashStarted;
+            stateMachine.player.Input.PlayerActions.Move.canceled += OnMovementCanceled;
+            stateMachine.player.Input.PlayerActions.Dash.started += OnDashStarted;
         }
         protected override void RemoveInputActionsCallbacks()
         {
             base.RemoveInputActionsCallbacks();
-            stateMachine.Player.Input.PlayerActions.Move.canceled -= OnMovementCanceled;
-            stateMachine.Player.Input.PlayerActions.Dash.started -= OnDashStarted;
+            stateMachine.player.Input.PlayerActions.Move.canceled -= OnMovementCanceled;
+            stateMachine.player.Input.PlayerActions.Dash.started -= OnDashStarted;
         }
         
         
         protected virtual void OnMove()
         {
-            stateMachine.ChangeState(shouldWalk ? stateMachine.WalkingState : stateMachine.RunningState);
+            stateMachine.ChangeState(stateMachine.reusableData.shouldWalk ? stateMachine.walkingState : stateMachine.runningState);
         }
         #endregion
         
         #region Input Methods
         protected virtual void OnMovementCanceled(InputAction.CallbackContext context)
         {
-            stateMachine.ChangeState(stateMachine.IdlingState);
+            stateMachine.ChangeState(stateMachine.idlingState);
         }
         protected virtual void OnDashStarted(InputAction.CallbackContext context)
         {
-            stateMachine.ChangeState(stateMachine.DashingState);
+            stateMachine.ChangeState(stateMachine.dashingState);
         }
         #endregion
     }

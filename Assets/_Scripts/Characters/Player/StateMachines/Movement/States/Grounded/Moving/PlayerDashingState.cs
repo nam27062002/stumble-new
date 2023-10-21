@@ -9,9 +9,10 @@ namespace MovementSystem
         private PlayerDashData _dashData;
         private float _startTime;
         private int _consecutiveDashesUsed;
+        private bool _shouldKeepRotating;
         public PlayerDashingState(PlayerMovementStateMachine stateMachine) : base(stateMachine)
         {
-            _dashData = movementData.DashData;
+            _dashData = movementData.dashData;
         }
 
         #region IState Methods
@@ -19,20 +20,34 @@ namespace MovementSystem
         {
             base.Enter();
             stateMachine.reusableData.movementSpeedModifier = _dashData.speedModifier;
+            stateMachine.reusableData.rotationData = _dashData.rotationData;
             AddForceOnTransitionFromStationaryState();
+            _shouldKeepRotating = stateMachine.reusableData.movementInput != Vector2.zero;
             UpdateConsecutiveDashes();
             _startTime = Time.time;
         }
 
+        public override void PhysicsUpdate()
+        {
+            base.PhysicsUpdate();
+            if (!_shouldKeepRotating) return;
+            RotateTowardsTargetRotation();
+        }
+
+        public override void Exit()
+        {
+            base.Exit();
+            SetbaseRotationData();
+        }
+
         public override void OnAnimationTransitionEvent()
         {
-            base.OnAnimationTransitionEvent();
             if (stateMachine.reusableData.movementInput == Vector2.zero)
             {
-                stateMachine.ChangeState(stateMachine.IdlingState);
+                stateMachine.ChangeState(stateMachine.idlingState);
                 return;
             }
-            stateMachine.ChangeState(stateMachine.SprintingState);
+            stateMachine.ChangeState(stateMachine.sprintingState);
         }
 
         #endregion
@@ -47,9 +62,10 @@ namespace MovementSystem
                 return;
             }
 
-            Vector3 characterDirection = stateMachine.Player.transform.forward;
+            Vector3 characterDirection = stateMachine.player.transform.forward;
             characterDirection.y = 0f;
-            stateMachine.Player.Rigidbody.velocity = characterDirection * GetMovementSpeed;
+            UpdateTargetRotation(characterDirection,false);
+            stateMachine.player.Rigidbody.velocity = characterDirection * GetMovementSpeed;
         }
 
         private void UpdateConsecutiveDashes()
@@ -63,13 +79,29 @@ namespace MovementSystem
             if (_consecutiveDashesUsed == _dashData.consecutiveDashesLimitAmount)
             {
                 _consecutiveDashesUsed = 0;
-                stateMachine.Player.Input.DisableActionFor(stateMachine.Player.Input.PlayerActions.Dash,_dashData.dashLimitReachedCooldown);
+                stateMachine.player.Input.DisableActionFor(stateMachine.player.Input.PlayerActions.Dash,_dashData.dashLimitReachedCooldown);
             }
         }
 
         private bool IsConsecutive()
         {
             return Time.time < _startTime + _dashData.timeTobeConsideredConsecutive;
+        }
+
+        #endregion
+
+        #region Reusable Methods
+
+        protected override void AddInputActionsCallbacks()
+        {
+            base.AddInputActionsCallbacks();
+            stateMachine.player.Input.PlayerActions.Move.performed += OnMovementPerformed;
+        }
+        
+        protected override void RemoveInputActionsCallbacks()
+        {
+            base.RemoveInputActionsCallbacks();
+            stateMachine.player.Input.PlayerActions.Move.performed -= OnMovementPerformed;
         }
 
         #endregion
@@ -84,6 +116,11 @@ namespace MovementSystem
         protected override void OnDashStarted(InputAction.CallbackContext context)
         {
             
+        }
+        
+        private void OnMovementPerformed(InputAction.CallbackContext context)
+        {
+            _shouldKeepRotating = true;
         }
         #endregion
 

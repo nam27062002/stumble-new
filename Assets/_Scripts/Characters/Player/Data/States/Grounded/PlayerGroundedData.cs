@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace MovementSystem
 {
@@ -7,10 +8,12 @@ namespace MovementSystem
     public class PlayerGroundedData
     {
         [Range(0f,10f)] public float baseSpeed = 5f;
-        public AnimationCurve SlopeSpeedAngles;
-        public PlayerRotationData BaseRotationData;
-        public PlayerWalkingData WalkingData;
-        public PlayerRunData RunData;
-        public PlayerDashData DashData;
+        public AnimationCurve slopeSpeedAngles;
+        public PlayerRotationData baseRotationData;
+        public PlayerWalkingData walkingData;
+        public PlayerRunData runData;
+        public PlayerDashData dashData;
+        public PlayerSprintData sprintData;
+        public PlayerStopData stopData;
     }
 }

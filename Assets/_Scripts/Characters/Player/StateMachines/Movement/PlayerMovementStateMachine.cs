@@ -1,45 +1,61 @@
-﻿using UnityEngine;
+﻿using MovementSystem.Stopping;
+using UnityEngine;
 
 namespace MovementSystem
 {
     public class PlayerMovementStateMachine : StateMachine
     {
-        public Player Player;
-        public PlayerStateReusableData reusableData;
-        public PlayerIdlingState IdlingState { get; }
-        public PlayerRunningState RunningState { get; }
-        public PlayerWalkingState WalkingState { get; }
-        public PlayerDashingState DashingState { get; }
-        public PlayerSprintingState SprintingState { get; }
+        public readonly Player player;
+        public readonly PlayerStateReusableData reusableData;
+
+       
+        // MOVE ON GROUND
+        public readonly PlayerRunningState runningState;
+        public readonly PlayerWalkingState walkingState;
+        public readonly PlayerDashingState dashingState;
+        public readonly PlayerSprintingState sprintingState;
         
+        // IDLE
+        public readonly PlayerIdlingState idlingState;
+        public readonly PlayerHardStoppingState hardStoppingState;
+        public readonly PlayerMediumStoppingState mediumStoppingState;
+        public readonly PlayerLightStoppingState lightStoppingState;
+        
+        // AIRBORNE
+        public readonly PlayerJumpingState jumpingState;
         public PlayerMovementStateMachine(Player player)
         {
-            Player = player;
+            this.player = player;
             reusableData = new PlayerStateReusableData();
-            IdlingState = new PlayerIdlingState(this);
-            RunningState = new PlayerRunningState(this);
-            WalkingState = new PlayerWalkingState(this);
-            SprintingState = new PlayerSprintingState(this);
-            DashingState = new PlayerDashingState(this);
+            idlingState = new PlayerIdlingState(this);
+            runningState = new PlayerRunningState(this);
+            walkingState = new PlayerWalkingState(this);
+            sprintingState = new PlayerSprintingState(this);
+            dashingState = new PlayerDashingState(this);
+            hardStoppingState = new PlayerHardStoppingState(this);
+            mediumStoppingState = new PlayerMediumStoppingState(this);
+            lightStoppingState = new PlayerLightStoppingState(this);
+            jumpingState = new PlayerJumpingState(this);
+
         }
         
-        public Vector2 GetMovementInput => Player.GetMovementInput;
+        public Vector2 GetMovementInput => player.GetMovementInput;
         public void SetAddForce(Vector3 movementDir)
         {
-            Player.SetAddForce(movementDir);
+            player.SetAddForce(movementDir);
         }
 
         public void SetRotation(Quaternion quaternion)
         {
-            Player.SetRotation(quaternion);
+            player.SetRotation(quaternion);
         }
         public Vector3 PlayerHorizontalVelocity
         {
-            get { return Player.PlayerHorizontalVelocity; }
-            set { Player.PlayerHorizontalVelocity = value; }
+            get { return player.PlayerHorizontalVelocity; }
+            set { player.PlayerHorizontalVelocity = value; }
         }
 
-        public Vector3 GetEulerAnglesCamera => Player.GetEulerAnglesCamera;
-        public Vector3 GetEulerAnglesPlayer => Player.GetEulerAnglesPlayer;
+        public Vector3 GetEulerAnglesCamera => player.GetEulerAnglesCamera;
+        public Vector3 GetEulerAnglesPlayer => player.GetEulerAnglesPlayer;
     }
 }

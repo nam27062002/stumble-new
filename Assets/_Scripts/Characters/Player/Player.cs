@@ -40,7 +40,7 @@ namespace MovementSystem
 
         private void Start()
         {
-            _movementStateMachine.ChangeState(_movementStateMachine.IdlingState);
+            _movementStateMachine.ChangeState(_movementStateMachine.idlingState);
         }
 
         private void Update()

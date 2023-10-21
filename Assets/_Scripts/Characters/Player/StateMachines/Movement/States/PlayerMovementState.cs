@@ -9,20 +9,19 @@ namespace MovementSystem
         
         protected readonly PlayerMovementStateMachine stateMachine;
         protected readonly PlayerGroundedData movementData;
-
-        protected bool shouldWalk;
         public PlayerMovementState(PlayerMovementStateMachine stateMachine)
         {
             this.stateMachine = stateMachine;
-            movementData = this.stateMachine.Player.data.GroundedData;
+            movementData = this.stateMachine.player.data.GroundedData;
             InitializeData();
         }
 
         private void InitializeData()
         {
-            stateMachine.reusableData.TimeToReachTargetRotation = 
-                movementData.BaseRotationData.TargetRotationReachTime;
+            SetbaseRotationData();
         }
+
+
         
         #region IState Methods
         public virtual void Enter()
@@ -98,7 +97,14 @@ namespace MovementSystem
         
         #region Reusable Methods
 
-        private float UpdateTargetRotation(Vector3 direction, bool shouldConsiderCameraRotation = true)
+        protected void SetbaseRotationData()
+        {
+            stateMachine.reusableData.rotationData = movementData.baseRotationData;
+            stateMachine.reusableData.TimeToReachTargetRotation = 
+                stateMachine.reusableData.rotationData.targetRotationReachTime;
+        }
+        
+        protected float UpdateTargetRotation(Vector3 direction, bool shouldConsiderCameraRotation = true)
         {
             float directionAngle = GetDirectionAngle(direction);
             if (shouldConsiderCameraRotation)
@@ -148,9 +154,9 @@ namespace MovementSystem
         protected float GetMovementSpeed => movementData.baseSpeed * stateMachine.reusableData.movementSpeedModifier * 
                                           stateMachine.reusableData.movementOnSlopesSpeedModifier;
 
-        protected Vector3 GetPlayerVerticalVelocity => new Vector3(0f,stateMachine.Player.Rigidbody.velocity.y,0f);
+        protected Vector3 GetPlayerVerticalVelocity => new Vector3(0f,stateMachine.player.Rigidbody.velocity.y,0f);
         
-        private void RotateTowardsTargetRotation()
+        protected void RotateTowardsTargetRotation()
         {
             float currentYAngle = stateMachine.GetEulerAnglesPlayer.y;
             if (currentYAngle == stateMachine.reusableData.CurrentTargetRotation.y)
@@ -159,7 +165,7 @@ namespace MovementSystem
             }
             
             float smoothedYAngle = Mathf.SmoothDampAngle(currentYAngle, stateMachine.reusableData.CurrentTargetRotation.y,
-                ref stateMachine.reusableData.DampedTargetRotationCurrentCelocity.y, stateMachine.reusableData.TimeToReachTargetRotation.y - stateMachine.reusableData.DampedTargetRotationPassedTime.y);
+                ref stateMachine.reusableData.DampedTargetRotationCurrentVelocity.y, stateMachine.reusableData.TimeToReachTargetRotation.y - stateMachine.reusableData.DampedTargetRotationPassedTime.y);
             stateMachine.reusableData.DampedTargetRotationPassedTime.y += Time.deltaTime;
             Quaternion targetRotation = Quaternion.Euler(0f,smoothedYAngle,0f);
             stateMachine.SetRotation(targetRotation);
@@ -184,19 +190,32 @@ namespace MovementSystem
         
         protected virtual void AddInputActionsCallbacks()
         {
-            stateMachine.Player.Input.PlayerActions.WalkToggle.started += OnWalkToggleStarted;
+            stateMachine.player.Input.PlayerActions.WalkToggle.started += OnWalkToggleStarted;
         }
         
         protected virtual void RemoveInputActionsCallbacks()
         {
-            stateMachine.Player.Input.PlayerActions.WalkToggle.started -= OnWalkToggleStarted;
+            stateMachine.player.Input.PlayerActions.WalkToggle.started -= OnWalkToggleStarted;
+        }
+
+        protected void DecelerateHorizontally()
+        {
+            Vector3 playerHorizontalVelocity = GetPlayerHorizontalVelocity();
+            stateMachine.player.Rigidbody.AddForce(-playerHorizontalVelocity * stateMachine.reusableData.movementDecelerationForce,ForceMode.Acceleration);
+        }
+
+        protected bool IsMovingHorizontally(float minimumMagnitude = 0.1f)
+        {
+            Vector3 playerHorizontalVelocity = GetPlayerHorizontalVelocity();
+            Vector2 playerHorizontalMovement = new Vector2(playerHorizontalVelocity.x, playerHorizontalVelocity.z);
+            return playerHorizontalMovement.magnitude > minimumMagnitude;
         }
         #endregion
 
         #region Input Methods
         protected virtual void OnWalkToggleStarted(InputAction.CallbackContext context)
         {
-            shouldWalk = !shouldWalk;
+            stateMachine.reusableData.shouldWalk = !stateMachine.reusableData.shouldWalk;
         }
         #endregion
     }
